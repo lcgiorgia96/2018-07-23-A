@@ -5,9 +5,11 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.newufosightings.model.Model;
+import it.polito.tdp.newufosightings.model.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -51,12 +53,56 @@ public class NewUfoSightingsController {
 
 	@FXML
 	void doCreaGrafo(ActionEvent event) {
-
+		
+		try {
+			
+			int anno = Integer.parseInt(txtAnno.getText());
+			String forma = cmbBoxForma.getValue();
+			
+			if (forma == null) {
+				txtResult.appendText("Selezionare una forma");
+			}
+			
+			this.model.creaGrafo(anno,forma);
+			
+			List<State> stati = this.model.getStati();
+			
+			for (State s: stati) {
+				txtResult.appendText("\n"+s+" "+this.model.getSommaPesi(s)+"\n");
+			}
+			
+		}
+		catch (RuntimeException e ) {
+			txtResult.appendText("Errore");
+		}
+		
 	}
 
 	@FXML
 	void doSelezionaAnno(ActionEvent event) {
-
+txtResult.clear();
+		
+		try {
+			
+			int anno = Integer.parseInt(txtAnno.getText());
+			
+			if (anno>=1910 && anno <=2014) {
+				
+				List<String> forme = this.model.getForme(anno);
+				
+				cmbBoxForma.getItems().addAll(forme);
+				
+			} else {
+				txtResult.appendText("Inserire un anno tra il 1910 e il 2014\n");
+			}
+			
+			
+			
+		} catch (NumberFormatException e ) {
+			txtResult.appendText("Inserire un numero nel formato corretto!\n");
+		} catch (RuntimeException e ) {
+			txtResult.appendText("Errore");
+		}
 	}
 
 	@FXML
